@@ -6,7 +6,7 @@ spec:
   selector:
     app: nginx-deployment
   type: ClusterIP
-  clusterIP: 10.10.5.10
+  clusterIP: 10.43.5.10
   ports:
   - name: http
     protocol: TCP
