@@ -1,0 +1,47 @@
+---
+apiVersion: "autoscaling.k8s.io/v1beta2"
+kind: VerticalPodAutoscaler
+metadata:
+  name: datascientest-vpa
+spec:
+  updatePolicy:
+    updateMode: "Auto"
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: datascientest-deploy
+  resourcePolicy:
+    containerPolicies:
+      - containerName: "*"
+        minAllowed:
+          cpu: 100m
+          memory: 50Mi
+        maxAllowed:
+          cpu: 1
+          memory: 500Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: datascientest-deploy
+spec:
+  selector:
+    matchLabels:
+      app: datascientest-deploy
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: datascientest-deploy
+    spec:
+      containers:
+        - name: datascientest
+          image: k8s.gcr.io/ubuntu-slim:0.1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 50Mi
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - "while true; do timeout 0.5s yes >/dev/null; sleep 0.5s; done"
