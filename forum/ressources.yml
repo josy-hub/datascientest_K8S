@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: phpbb-pv
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: phpbb-pvc
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: phpbb-pod
+spec:
+  volumes:
+    - name: phpbb-pod-storage
+      persistentVolumeClaim:
+        claimName: phpbb-pvc
+  containers:
+    - name: phpbb-container
+      image: bitnami/phpbb:latest
+      ports:
+        - containerPort: 80
+          name: "serveur-phpbb"
+      volumeMounts:
+        - mountPath: "/usr/share/php/"
+          name: phpbb-pod-storage
