@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-phpbb
+  labels:
+    app: {{ .Release.Name }}-phpbb
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-phpbb
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-phpbb
+    spec:
+      containers:
+        - name:     {{ .Release.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              #containerPort: {{ .Values.service.port }}
+              containerPort: 80
+              protocol: TCP
+          env:
+            - name: PHPBB_DATABASE_NAME
+              value: {{ .Values.mariadb.auth.database }}
+            - name: PHPBB_DATABASE_USER
+              value: {{ .Values.mariadb.auth.username }}
+            - name: PHPBB_DATABASE_PASSWORD
+              value: {{ .Values.mariadb.auth.password }}
+            - name: PHPBB_ROOT_PASSWORD
+              value: {{ .Values.mariadb.auth.rootPassword }}
+            - name: PHPBB_PASSWORD
+              value: {{ .Values.phpbbPassword }}
+            - name: PHPBB_USERNAME
+              value: {{ .Values.phpbbUsername }}
+            - name: PHPBB_EMAIL
+              value: {{ .Values.phpbbEmail }}
+    #  tolerations:
+     #   - key: "node.kubernetes.io/disk-pressure"
+     #    operator: "Exists"
+      #    effect: "NoSchedule"

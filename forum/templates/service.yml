@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-phpbb
+  labels:
+    app: {{ .Release.Name }}-phpbb
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    #- port: {{ .Values.service.port }}
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+      #nodePort: {{ .Values.service.nodePort | default 30005 }}
+      nodePort: 30005
+  selector:
+    app: {{ .Release.Name }}-phpbb

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-mariadb
+  labels:
+    app: {{ .Release.Name }}-mariadb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-mariadb
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-mariadb
+    spec:
+      containers:
+      - name: {{ .Release.Name }}-forum-mariadb
+        image: docker.io/mariadb:10.4
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: MARIADB_ROOT_PASSWORD
+          value: {{ .Values.mariadb.auth.rootPassword }}
+        - name: MARIADB_DATABASE
+          value: {{ .Values.mariadb.auth.database }}
+        - name: MARIADB_USER
+          value: {{ .Values.mariadb.auth.username }}
+        - name: MARIADB_PASSWORD
+          value: {{ .Values.mariadb.auth.password }}
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: mariadb-persistent-storage
+          mountPath: /var/lib/mariadb
+      volumes:
+      - name: mariadb-persistent-storage
+        persistentVolumeClaim:
+          claimName: {{ .Release.Name }}-mariadb-pvc

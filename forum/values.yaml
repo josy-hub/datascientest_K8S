@@ -17,7 +17,7 @@ global:
   ##   - myRegistryKeySecretName
   ##
   imagePullSecrets: []
-  storageClass: ""
+  storageClass: local-path
   ## Compatibility adaptations for Kubernetes platforms
   ##
   compatibility:
@@ -486,7 +486,7 @@ serviceAccount:
 service:
   ## @param service.type Kubernetes Service type
   ##
-  type: LoadBalancer
+  type: NodePort
   ## @param service.ports.http Service HTTP port
   ## @param service.ports.https Service HTTPS port
   ##
@@ -504,8 +504,8 @@ service:
   ##   https: <to set explicitly, choose port between 30000-32767>
   ##
   nodePorts:
-    http: "8080"
-    https: "444"
+    http: 8080
+    https: 444
   ## @param service.externalTrafficPolicy Enable client source IP preservation
   ## ref https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
   ##
@@ -672,7 +672,7 @@ mariadb:
     username: bn_phpbb
     ## @param mariadb.auth.password Password for the database
     ##
-    password: ""
+    password: bitnami
   primary:
     ## MariaDB primary container's resource requests and limits
     ## ref: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
@@ -716,7 +716,7 @@ mariadb:
         - ReadWriteOnce
       ## @param mariadb.primary.persistence.size Database Persistent Volume Size
       ##
-      size: 8Gi
+      size: 10Gi
       ## @param mariadb.primary.persistence.hostPath Host mount path for MariaDB volume
       ##
       hostPath: ""
